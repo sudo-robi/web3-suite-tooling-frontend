@@ -1,4 +1,4 @@
-# Web3 Suite Tooling Frontend
+# Web3 Suite Tooling — Frontend Dashboard
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![React](https://img.shields.io/badge/React-18.x-61DAFB.svg)](https://react.dev)
@@ -7,33 +7,23 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-06B6D4.svg)](https://tailwindcss.com)
 [![Stellar](https://img.shields.io/badge/Stellar-Soroban-6B3FA0.svg)](https://stellar.org)
 
-React-based frontend dashboard for the **Web3 Suite Tooling** platform. Provides interactive interfaces for oracle price feeds, on-chain analytics, and governance participation on the Stellar/Soroban network.
+> React-based frontend dashboard for oracle price feeds, on-chain analytics, and governance participation on the Stellar/Soroban network.
 
 ---
 
-## Screenshots
+## Table of Contents
 
-<!-- Add screenshots here -->
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  [Header: Dashboard | Oracle | Analytics | Governance]  [Wallet]│
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐                     │
-│  │  Active  │  │  Price   │  │ Network  │                     │
-│  │  Feeds   │  │ Updates  │  │ Testnet  │                     │
-│  └──────────┘  └──────────┘  └──────────┘                     │
-│                                                                 │
-│  ┌─────────────────────┐  ┌─────────────────────┐             │
-│  │   Latest Prices     │  │   Quick Actions     │             │
-│  │                     │  │                     │             │
-│  │  XLM/USD  $0.1250  │  │  → Oracle Explorer  │             │
-│  │  AQUA/USD $0.0045  │  │  → Analytics Dash   │             │
-│  │  ...               │  │  → Governance Portal│             │
-│  └─────────────────────┘  └─────────────────────┘             │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Setup](#setup)
+- [Environment Variables](#environment-variables)
+- [Wallet Integration](#wallet-integration)
+- [Routing](#routing)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
@@ -65,59 +55,122 @@ React-based frontend dashboard for the **Web3 Suite Tooling** platform. Provides
 
 ---
 
+## Screenshots
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  [Header: Dashboard | Oracle | Analytics | Governance]  [Wallet]│
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐                     │
+│  │  Active  │  │  Price   │  │ Network  │                     │
+│  │  Feeds   │  │ Updates  │  │ Testnet  │                     │
+│  └──────────┘  └──────────┘  └──────────┘                     │
+│                                                                 │
+│  ┌─────────────────────┐  ┌─────────────────────┐             │
+│  │   Latest Prices     │  │   Quick Actions     │             │
+│  │                     │  │                     │             │
+│  │  XLM/USD  $0.1250  │  │  → Oracle Explorer  │             │
+│  │  AQUA/USD $0.0045  │  │  → Analytics Dash   │             │
+│  │  ...               │  │  → Governance Portal│             │
+│  └─────────────────────┘  └─────────────────────┘             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## Tech Stack
 
 | Technology | Purpose |
 |------------|---------|
-| **React 18** | UI framework |
-| **TypeScript 5** | Type safety |
-| **Vite 5** | Build tool & dev server |
-| **Tailwind CSS 3** | Utility-first styling |
-| **React Router 6** | Client-side routing |
-| **@stellar/stellar-sdk** | Stellar/Soroban wallet integration |
-| **Lucide React** | Icon library |
+| **React 18** | UI framework with hooks and functional components |
+| **TypeScript 5** | Type safety and better developer experience |
+| **Vite 5** | Lightning-fast build tool and dev server |
+| **Tailwind CSS 3** | Utility-first styling with custom Stellar theme |
+| **React Router 6** | Client-side routing with nested routes |
+| **@stellar/stellar-sdk** | Stellar/Soroban wallet integration (Freighter) |
+| **Lucide React** | Beautiful, consistent icon library |
+
+---
+
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    Browser (React SPA)                       │
+│                                                              │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐           │
+│  │   Pages    │  │ Components │  │   Hooks    │           │
+│  │            │  │            │  │            │           │
+│  │ Dashboard  │  │ Header     │  │ useWallet  │           │
+│  │ Oracle     │  │ Card       │  │ useOracle  │           │
+│  │ Analytics  │  │ StatCard   │  │            │           │
+│  │ Governance │  │ Spinner    │  │            │           │
+│  └─────┬──────┘  └────────────┘  └─────┬──────┘           │
+│        │                                │                   │
+│  ┌─────┴────────────────────────────────┴──────┐           │
+│  │              Services Layer                   │           │
+│  │  ┌──────────┐  ┌──────────┐                 │           │
+│  │  │  API     │  │ Stellar  │                 │           │
+│  │  │ Client   │  │ Service  │                 │           │
+│  │  └────┬─────┘  └────┬─────┘                 │           │
+│  └───────┼──────────────┼──────────────────────┘           │
+└──────────┼──────────────┼───────────────────────────────────┘
+           │              │
+           ▼              ▼
+    ┌──────────────┐  ┌──────────────┐
+    │  Backend API │  │  Freighter   │
+    │  (Express)   │  │  Wallet Ext  │
+    └──────┬───────┘  └──────────────┘
+           │
+           ▼
+    ┌──────────────┐
+    │   Stellar    │
+    │   Network    │
+    └──────────────┘
+```
 
 ---
 
 ## Project Structure
 
 ```
-web3-suite-tooling-frontend/
-├── index.html
-├── package.json
-├── tsconfig.json
-├── tsconfig.node.json
-├── vite.config.ts
-├── tailwind.config.js
-├── postcss.config.js
+frontend/
+├── index.html                  # HTML entry point
+├── package.json                # Dependencies and scripts
+├── tsconfig.json               # TypeScript config
+├── tsconfig.node.json          # Node TypeScript config (Vite)
+├── vite.config.ts              # Vite build config + API proxy
+├── tailwind.config.js          # Tailwind CSS with Stellar theme
+├── postcss.config.js           # PostCSS config
 ├── .gitignore
 ├── LICENSE
 ├── README.md
 └── src/
-    ├── main.tsx              # App entry point
-    ├── App.tsx               # Root component with routing
-    ├── index.css             # Tailwind imports + global styles
+    ├── main.tsx                # App entry point (ReactDOM.createRoot)
+    ├── App.tsx                 # Root component with React Router
+    ├── index.css               # Tailwind imports + global styles
     ├── config/
-    │   └── index.ts          # Environment configuration
+    │   └── index.ts            # Environment configuration
     ├── components/
-    │   ├── Header.tsx        # Navigation header with wallet
-    │   ├── Card.tsx          # Reusable card & stat components
-    │   └── LoadingSpinner.tsx # Loading indicator
+    │   ├── Header.tsx          # Navigation header with wallet connect
+    │   ├── Card.tsx            # Reusable Card component
+    │   ├── StatCard.tsx        # Stats display card component
+    │   └── LoadingSpinner.tsx  # Loading indicator
     ├── hooks/
-    │   ├── useWallet.ts      # Wallet connection hook
-    │   └── useOracle.ts      # Oracle data hook
+    │   ├── useWallet.ts        # Freighter wallet connection hook
+    │   └── useOracle.ts        # Oracle data fetching hook
     ├── pages/
-    │   ├── Dashboard.tsx     # Main dashboard overview
-    │   ├── Oracle.tsx        # Oracle explorer page
-    │   ├── Analytics.tsx     # Analytics dashboard page
-    │   └── Governance.tsx    # Governance portal page
+    │   ├── Dashboard.tsx       # Main dashboard overview
+    │   ├── Oracle.tsx          # Oracle explorer with price table
+    │   ├── Analytics.tsx       # Analytics dashboard with metrics
+    │   └── Governance.tsx      # Governance portal with proposals
     ├── services/
-    │   ├── api.ts            # Backend API client
-    │   └── stellar.ts        # Stellar SDK utilities
-    ├── types/
-    │   └── index.ts          # TypeScript type definitions
-    └── assets/
-        └── (static assets)
+    │   ├── api.ts              # Backend REST API client
+    │   └── stellar.ts          # Stellar SDK utilities + wallet
+    └── types/
+        └── index.ts            # TypeScript type definitions
 ```
 
 ---
@@ -128,7 +181,8 @@ web3-suite-tooling-frontend/
 
 - Node.js >= 18.0.0
 - npm or yarn
-- Running backend API (see [backend repo](../web3-suite-tooling-backend))
+- Running backend API (see [backend](../backend/))
+- Freighter browser extension (for wallet features)
 
 ### Installation
 
@@ -154,10 +208,18 @@ VITE_STELLAR_NETWORK=testnet
 VITE_STELLAR_RPC_URL=https://soroban-testnet.stellar.org
 ```
 
-### Development
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `VITE_API_URL` | `/api` | Backend API base URL |
+| `VITE_STELLAR_NETWORK` | `testnet` | Stellar network to connect to |
+| `VITE_STELLAR_RPC_URL` | `https://soroban-testnet.stellar.org` | Soroban RPC endpoint |
+
+---
+
+## Development
 
 ```bash
-# Start development server
+# Start development server (http://localhost:5173)
 npm run dev
 
 # Run type checking
@@ -165,17 +227,22 @@ npm run typecheck
 
 # Run linter
 npm run lint
+
+# Auto-fix linting issues
+npm run lint:fix
 ```
 
-The dev server runs at `http://localhost:5173` and proxies API requests to the backend at `http://localhost:3001`.
+The dev server proxies `/api` requests to the backend at `http://localhost:3001`.
 
-### Build & Preview
+---
+
+## Build & Preview
 
 ```bash
 # Build for production
 npm run build
 
-# Preview production build
+# Preview production build locally
 npm run preview
 ```
 
@@ -185,16 +252,34 @@ npm run preview
 
 The frontend integrates with [Freighter](https://freighter.app/) for Stellar wallet connectivity:
 
-1. Install the Freighter browser extension
-2. Click "Connect Wallet" in the header
+### Setup
+
+1. Install the [Freighter browser extension](https://freighter.app/)
+2. Click **"Connect Wallet"** in the header
 3. Approve the connection in Freighter
 4. Your address will be displayed in the navigation bar
 
 ### Supported Operations
 
-- View wallet address and balance
-- Sign transactions for governance voting
-- Submit oracle price updates (admin)
+| Operation | Description |
+|-----------|-------------|
+| View wallet address | Display truncated address in header |
+| Check balance | Query XLM and token balances |
+| Sign transactions | Sign governance votes and oracle updates |
+| Network detection | Auto-detect Stellar network |
+
+### useWallet Hook
+
+```typescript
+const { wallet, connect, disconnect, isConnecting } = useWallet();
+
+// wallet.address  — Connected address (or '')
+// wallet.network  — Network name (e.g., 'testnet')
+// wallet.isConnected — Boolean connection state
+// connect()       — Trigger Freighter connection
+// disconnect()    — Clear wallet state
+// isConnecting    — True while connection is pending
+```
 
 ---
 
@@ -206,6 +291,28 @@ The frontend integrates with [Freighter](https://freighter.app/) for Stellar wal
 | `/oracle` | Oracle Explorer | Price feed management |
 | `/analytics` | Analytics Dashboard | Contract metric tracking |
 | `/governance` | Governance Portal | Proposal voting |
+
+---
+
+## Component API
+
+### `<StatCard>`
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `label` | `string` | Card label text |
+| `value` | `string \| number` | Main stat value |
+| `change` | `string?` | Change indicator text |
+| `positive` | `boolean?` | Green if true, red if false |
+| `icon` | `ReactNode?` | Optional icon element |
+
+### `<Card>`
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `title` | `string` | Card header title |
+| `children` | `ReactNode` | Card content |
+| `className` | `string?` | Additional CSS classes |
 
 ---
 
@@ -227,9 +334,23 @@ The frontend integrates with [Freighter](https://freighter.app/) for Stellar wal
 - Components go in `src/components/`
 - Pages go in `src/pages/`
 - Custom hooks go in `src/hooks/`
+- Services go in `src/services/`
+
+### Commit Convention
+
+| Prefix | Purpose |
+|--------|---------|
+| `feat:` | New feature |
+| `fix:` | Bug fix |
+| `docs:` | Documentation changes |
+| `style:` | UI/styling changes |
+| `refactor:` | Code restructuring without behavior change |
+| `chore:` | Maintenance tasks |
 
 ---
 
 ## License
 
 [MIT](LICENSE)
+
+Copyright (c) 2024 Web3 Suite contributors
